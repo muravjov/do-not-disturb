@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Svg Vector Icons : http://www.onlinewebfonts.com/icon -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 1000 1000"
+   enable-background="new 0 0 1000 1000"
+   xml:space="preserve"
+   id="svg12"
+   sodipodi:docname="bell_normal.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"><defs
+   id="defs16" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1920"
+   inkscape:window-height="1080"
+   id="namedview14"
+   showgrid="false"
+   inkscape:zoom="0.236"
+   inkscape:cx="500"
+   inkscape:cy="500"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="g8" />
+<metadata
+   id="metadata2"> Svg Vector Icons : http://www.onlinewebfonts.com/icon <rdf:RDF><cc:Work
+     rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+       rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata>
+<g
+   id="g10"><g
+     transform="translate(0.000000,511.000000) scale(0.100000,-0.100000)"
+     id="g8"><path
+       d="M4693.7,4981.5c-1245.4-114.8-2335.2-967.2-2766.5-2164.2c-158.2-441.5-173.5-604.8-194-1855.4C1715.5-316.6,1718-291.1,1526.6-661.1c-242.4-467-648.2-783.5-1242.9-969.8L100-1689.6v-735v-735h4900h4900v735v735l-183.8,58.7c-638,201.6-1018.3,507.9-1270.9,1018.3C8284.5-286,8284.5-288.5,8266.7,962c-15.3,1038.7-23,1174-74,1408.8c-239.9,1140.8-1036.1,2057-2115.7,2442.3C5678.8,4953.4,5130.1,5022.4,4693.7,4981.5z M5523.2,3861.2c796.3-194,1408.8-816.7,1610.4-1638.4c38.3-160.8,48.5-357.3,61.3-1350l15.3-1161.2l71.5-255.2c135.3-497.7,403.2-959.6,763.1-1322c107.2-109.7,196.5-204.2,196.5-211.8c0-5.1-1457.2-10.2-3241.1-10.2c-1781.3,0-3241.1,5.1-3241.1,12.8c0,5.1,84.2,94.4,186.3,196.5c398.1,398.1,653.3,862.6,811.6,1475.1c17.9,74,35.7,546.2,48.5,1301.6c20.4,1291.4,20.4,1304.1,183.8,1702.2c290.9,701.8,995.3,1225,1781.3,1319.4C4936.2,3940.3,5319,3909.6,5523.2,3861.2z"
+       id="path4"
+       style="fill:#e6e6e6" /><path
+       d="M3162.5-3739c0-40.8,262.9-367.5,377.7-469.6c296-262.9,696.7-467.1,1051.5-535.9c211.8-38.3,604.8-38.3,816.7,0c354.7,68.9,755.4,273,1051.5,535.9c114.8,102.1,377.7,428.7,377.7,469.6c0,10.2-826.9,17.9-1837.5,17.9C3989.4-3721.1,3162.5-3728.7,3162.5-3739z"
+       id="path6"
+       style="fill:#e6e6e6" /></g></g>
+</svg>
