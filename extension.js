@@ -139,6 +139,7 @@ function enable() {
 
   let snoozeTimeoutId = 0;
   let timeToUnsnoozeFunctor; // seconds before setDNDState(false)
+  let setPresenceStatus;
 
   const Mainloop = imports.mainloop;
   const GLib = imports.gi.GLib;
@@ -146,6 +147,8 @@ function enable() {
     dndOn = state;
     updateIcon();
     switchDNDitem.setToggleState(state);
+
+    setPresenceStatus(state);
 
     if (snoozeTimeoutId != 0) {
       Mainloop.source_remove(snoozeTimeoutId);
@@ -188,7 +191,22 @@ function enable() {
   });
 
   // to set up initial state
-  setDNDState(false);
+  //setDNDState(false);
+  //
+  // 1. wait for initial state and set it as is
+  const presence = imports.presence;
+  function onPresenceInit(remotedndOn) {
+    setDNDState(remotedndOn);
+  }
+  // 2. if our state differ from real one we suppose that
+  // somethins else change it, so we sync
+  function onPresenceChange(remotedndOn) {
+    if (remotedndOn != dndOn) {
+      setDNDState(remotedndOn);
+    }
+  }
+
+  setPresenceStatus = presence.trackPresence(onPresenceInit, onPresenceChange);
 
   function updateSNLabel() {
     let snoozeText = defaultSnoozeText;

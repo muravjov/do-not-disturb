@@ -1,46 +1,49 @@
-function main() {
-  imports.searchPath.unshift(
-    "/home/ilya/opt/src/gnome-shell/gnome-shell-3.28.3/js",
-  );
-  const GnomeSession = imports.misc.gnomeSession;
+const GnomeSession = imports.misc.gnomeSession;
 
-  let presence = GnomeSession.Presence((proxy, error) => {
-    print("oninit", proxy.status, proxy);
-  });
-
-  print("list", Object.keys(presence));
-
-  let statusChangedSig = presence.connectSignal(
-    "StatusChanged",
-    (proxy, senderName, [status]) => {
-      print("StatusChanged", proxy.status, proxy, senderName);
-    },
-  );
-
-  const Mainloop = imports.mainloop;
-  const GLib = imports.gi.GLib;
-  Mainloop.timeout_add(2 * 1000, function() {
-    let status = false
-      ? GnomeSession.PresenceStatus.AVAILABLE
-      : GnomeSession.PresenceStatus.BUSY;
-
-    print(presence.status, status);
-
-    // *Remote and *Sync are added by _addDBusConvenience(), Gio.js
-    presence.SetStatusSync(status);
-
-    print(presence.status, status);
-
-    return GLib.SOURCE_REMOVE;
-  });
-
-  Mainloop.run();
+function status2DND(status) {
+  return status == GnomeSession.PresenceStatus.BUSY;
 }
 
-// :TRICKY: any way to determine this is main/top module, Gjs devs?
-let newline = /\r\n|\r|\n/g;
-if (
-  new Error().stack.split(newline).filter(line => line.length > 0).length == 1
-) {
-  main();
+//
+// This is async API, even initial state is being got async way (onInit):
+// - SetStatusSync is really Gio.DBusProxy.call_sync() = g_dbus_proxy_call_sync(),
+//   but don't know how to get result sync, without connectSignal("StatusChanged")
+// - .status attribute is useless; really it calls g_dbus_proxy_get_cached_property(),
+//   and it stores not actual, but some stale value
+// - really flag GnomeSession.Presence = "/org/gnome/SessionManager/Presence"' interface is handled in gnome-session
+//   package, and it is just a .status attribute (guint) in GsmPresencePrivate, gnome-session/gsm-presence.c
+
+function trackPresence(onInit, onChange) {
+  let presence = GnomeSession.Presence((proxy, error) => {
+    let dndOn = false;
+    if (error) {
+      logError(error, "Can't get initial value of GnomeSession.Presence");
+    } else {
+      dndOn = status2DND(proxy.status);
+    }
+
+    //print("oninit", proxy.status, proxy, error);
+    onInit(dndOn);
+  });
+
+  // SetStatusRemote,SetStatusSync,status
+  //print("list", Object.keys(presence));
+  // always null
+  //print("value", presence.status);
+
+  presence.connectSignal("StatusChanged", (proxy, senderName, [status]) => {
+    //print("StatusChanged", proxy.status, status, senderName);
+    onChange(status2DND(status));
+  });
+
+  function setPresenceStatus(dndOn) {
+    let status = dndOn
+      ? GnomeSession.PresenceStatus.BUSY
+      : GnomeSession.PresenceStatus.AVAILABLE;
+
+    // *Remote and *Sync are added by _addDBusConvenience(), Gio.js
+    presence.SetStatusRemote(status);
+  }
+
+  return setPresenceStatus;
 }
