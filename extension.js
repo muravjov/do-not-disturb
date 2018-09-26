@@ -49,17 +49,33 @@ function enable() {
     icon.set_gicon(Gio.icon_new_for_string(iconPath(iconName)));
   }
 
-  // :TODO: show hidden messages count
-  //   const Clutter = imports.gi.Clutter;
-  //   // A label expanded and center aligned in the y-axis
-  //   let toplabel = new St.Label({
-  //     text: " Menu ",
-  //     y_expand: true,
-  //     y_align: Clutter.ActorAlign.CENTER,
-  //   });
+  const Clutter = imports.gi.Clutter;
+  // A label expanded and center aligned in the y-axis
+  let notificationsCount = new St.Label({
+    text: "0",
+    //y_expand: true,
+    y_align: Clutter.ActorAlign.CENTER,
+  });
+
+  const Main = imports.ui.main;
+  let unseenlist =
+    Main.panel.statusArea.dateMenu._messageList._notificationSection._list;
+  function onNotification() {
+    let number = unseenlist.get_n_children();
+    if (number != 0) {
+      notificationsCount.set_text(number.toString());
+      notificationsCount.show();
+    } else {
+      notificationsCount.hide();
+    }
+  }
+  onNotification();
+
+  unseenlist.connect("actor-added", onNotification);
+  unseenlist.connect("actor-removed", onNotification);
 
   box.add(icon);
-  //box.add(toplabel);
+  box.add(notificationsCount);
   //box.add(PopupMenu.arrowIcon(St.Side.BOTTOM));
 
   dndButton.actor.add_child(box);
@@ -82,7 +98,6 @@ function enable() {
   // });
   // Main.panel._rightBox.insert_child_at_index(button, 0);
 
-  const Main = imports.ui.main;
   /* 
 	In here we are adding the button in the status area
 	- `DoNotDisturbRole` is tha role, must be unique. You can access it from the Looking Glass  in 'Main.panel.statusArea.DoNotDisturbRole`
