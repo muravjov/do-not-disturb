@@ -15,12 +15,7 @@ function iconPath(name) {
 imports.searchPath.unshift(Me.path);
 const timeUtils = imports.timeUtils;
 
-const vprintf = imports.format.vprintf;
-function sprintf() {
-  let args = Array.prototype.slice.call(arguments);
-  let fmt = args.shift();
-  return vprintf(fmt, args);
-}
+const sprintf = imports.sprintf.sprintf;
 
 function enable() {
   let dndOn = false;
@@ -156,6 +151,9 @@ function enable() {
   let timeToUnsnoozeFunctor; // seconds before setDNDState(false)
   let setPresenceStatus;
 
+  let unMuteAudio = null;
+  const pactl = imports.pactl;
+
   const Mainloop = imports.mainloop;
   const GLib = imports.gi.GLib;
   function setDNDState(state, { snoozedSeconds } = { snoozedSeconds: 0 }) {
@@ -164,6 +162,16 @@ function enable() {
     switchDNDitem.setToggleState(state);
 
     setPresenceStatus(state);
+
+    if (state) {
+      unMuteAudio = pactl.muteAudio();
+    } else {
+      if (unMuteAudio) {
+        let uma = unMuteAudio;
+        unMuteAudio = null;
+        uma();
+      }
+    }
 
     if (snoozeTimeoutId != 0) {
       Mainloop.source_remove(snoozeTimeoutId);
