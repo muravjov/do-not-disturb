@@ -1,1 +1,6 @@
-{"name": "Do Not Disturb", "description": "Disables notifications and sound for a period", "uuid": "dnd@catbo.net", "shell-version": ["3.28.1"]}
+{
+  "name": "Do Not Disturb",
+  "description": "Disables notifications and audio for a period",
+  "uuid": "dnd@catbo.net",
+  "shell-version": ["3.28.1"]
+}

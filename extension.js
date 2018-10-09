@@ -8,7 +8,7 @@ let dndButton;
 function init() {}
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-function iconPath(name) {
+function expandLocalPath(name) {
   return Me.path + "/" + name;
 }
 
@@ -41,7 +41,7 @@ function enable() {
   function updateIcon() {
     // https://www.onlinewebfonts.com/icon/571348
     let iconName = dndOn ? "bell_snoozed.svg" : "bell_normal.svg";
-    icon.set_gicon(Gio.icon_new_for_string(iconPath(iconName)));
+    icon.set_gicon(Gio.icon_new_for_string(expandLocalPath(iconName)));
   }
 
   const Clutter = imports.gi.Clutter;
@@ -154,6 +154,8 @@ function enable() {
   let unMuteAudio = null;
   const pactl = imports.pactl;
 
+  let settings = imports.configuration.getSettings(expandLocalPath("schemas"));
+
   const Mainloop = imports.mainloop;
   const GLib = imports.gi.GLib;
   function setDNDState(state, { snoozedSeconds } = { snoozedSeconds: 0 }) {
@@ -164,7 +166,11 @@ function enable() {
     setPresenceStatus(state);
 
     if (state) {
-      unMuteAudio = pactl.muteAudio();
+      // leave audio untouched if previous unMuteAudio exists,-
+      // it knows what to do better
+      if (!unMuteAudio && settings.get_boolean("mute-audio")) {
+        unMuteAudio = pactl.muteAudio();
+      }
     } else {
       if (unMuteAudio) {
         let uma = unMuteAudio;
