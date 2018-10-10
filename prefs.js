@@ -95,7 +95,7 @@ function buildPrefsWidget() {
 
     frame.pack_start(
       new Gtk.Label({
-        label: "<b>Do Not Disturb</b>",
+        label: "<b>Do Not Disturb Time</b>",
         use_markup: true,
       }),
       true,

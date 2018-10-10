@@ -1,7 +1,7 @@
 {
-  "name": "Do Not Disturb",
+  "name": "Do Not Disturb Time",
   "description": "Disables notifications and audio for a period",
   "url": "https://github.com/muravjov/do-not-disturb",
-  "uuid": "dnd@catbo.net",
+  "uuid": "do-not-disturb-time@catbo.net",
   "shell-version": ["3.28.1"]
 }
