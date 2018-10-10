@@ -31,10 +31,13 @@ function trackPresence(onInit, onChange) {
   // always null
   //print("value", presence.status);
 
-  presence.connectSignal("StatusChanged", (proxy, senderName, [status]) => {
-    //print("StatusChanged", proxy.status, status, senderName);
-    onChange(status2DND(status));
-  });
+  let signalId = presence.connectSignal(
+    "StatusChanged",
+    (proxy, senderName, [status]) => {
+      //print("StatusChanged", proxy.status, status, senderName);
+      onChange(status2DND(status));
+    },
+  );
 
   function setPresenceStatus(dndOn) {
     let status = dndOn
@@ -45,5 +48,10 @@ function trackPresence(onInit, onChange) {
     presence.SetStatusRemote(status);
   }
 
-  return setPresenceStatus;
+  return {
+    setPresenceStatus,
+    disconnect: function() {
+      presence.disconnectSignal(signalId);
+    },
+  };
 }

@@ -66,8 +66,16 @@ function enable() {
   }
   onNotification();
 
-  unseenlist.connect("actor-added", onNotification);
-  unseenlist.connect("actor-removed", onNotification);
+  let connectedSignalList = [];
+  function connectSignal(container, signalName, cb) {
+    let signal = container.connect(signalName, cb);
+    connectedSignalList.push(function() {
+      container.disconnect(signal);
+    });
+  }
+
+  connectSignal(unseenlist, "actor-added", onNotification);
+  connectSignal(unseenlist, "actor-removed", onNotification);
 
   box.add(icon);
   box.add(notificationsCount);
@@ -149,9 +157,25 @@ function enable() {
 
   let snoozeTimeoutId = 0;
   let timeToUnsnoozeFunctor; // seconds before setDNDState(false)
+  function removeSnoozeTimer() {
+    if (snoozeTimeoutId != 0) {
+      Mainloop.source_remove(snoozeTimeoutId);
+      snoozeTimeoutId = 0;
+      timeToUnsnoozeFunctor = null;
+    }
+  }
+
   let setPresenceStatus;
 
   let unMuteAudio = null;
+  function restoreAudio() {
+    if (unMuteAudio) {
+      let uma = unMuteAudio;
+      unMuteAudio = null;
+      uma();
+    }
+  }
+
   const pactl = imports.pactl;
 
   let settings = imports.configuration.getSettings(expandLocalPath("schemas"));
@@ -172,18 +196,10 @@ function enable() {
         unMuteAudio = pactl.muteAudio();
       }
     } else {
-      if (unMuteAudio) {
-        let uma = unMuteAudio;
-        unMuteAudio = null;
-        uma();
-      }
+      restoreAudio();
     }
 
-    if (snoozeTimeoutId != 0) {
-      Mainloop.source_remove(snoozeTimeoutId);
-      snoozeTimeoutId = 0;
-      timeToUnsnoozeFunctor = null;
-    }
+    removeSnoozeTimer();
 
     if (state && snoozedSeconds > 0) {
       let esf = timeUtils.elapsedSecondsFunctor();
@@ -235,7 +251,8 @@ function enable() {
     }
   }
 
-  setPresenceStatus = presence.trackPresence(onPresenceInit, onPresenceChange);
+  let tpContext = presence.trackPresence(onPresenceInit, onPresenceChange);
+  setPresenceStatus = tpContext.setPresenceStatus;
 
   function updateSNLabel() {
     let snoozeText = defaultSnoozeText;
@@ -285,6 +302,19 @@ function enable() {
   //  updateSNLabel();
   //  origOpen.apply(dndMenu, arguments);
   //};
+
+  dndMenu.connect("destroy", function(menu) {
+    // :TRICKY: we cannot just setDNDState(false) because UI has already destroyed
+    //setDNDState(false);
+    removeSnoozeTimer();
+    restoreAudio();
+
+    tpContext.disconnect();
+
+    for (const disconnect of connectedSignalList) {
+      disconnect();
+    }
+  });
 }
 
 function disable() {

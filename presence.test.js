@@ -16,7 +16,10 @@ function main() {
   }
 
   const presence = imports.presence;
-  let setPresenceStatus = presence.trackPresence(onInit, onChange);
+  let { setPresenceStatus, disconnect } = presence.trackPresence(
+    onInit,
+    onChange,
+  );
 
   const Mainloop = imports.mainloop;
   const GLib = imports.gi.GLib;
