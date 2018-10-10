@@ -22,7 +22,6 @@ function trackPresence(onInit, onChange) {
       dndOn = status2DND(proxy.status);
     }
 
-    //print("oninit", proxy.status, proxy, error);
     onInit(dndOn);
   });
 

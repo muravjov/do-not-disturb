@@ -132,9 +132,6 @@ function isMuted(defaultSink) {
 }
 
 function main() {
-  //print(GLib.spawn_sync);
-  //print(GLib.spawn_command_line_sync);
-
   if (false) {
     var [defaultSink, ok] = getDefaultSink();
     if (!ok) {

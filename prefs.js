@@ -28,6 +28,7 @@ function buildPrefsWidget() {
     }),
   );
 
+  // :TRICKY: section title is not needed for one setting
   //   frame.pack_start(
   //     new Gtk.Label({
   //       label: _("<b>Title</b>"),
@@ -89,7 +90,6 @@ function buildPrefsWidget() {
       new Gtk.Label({
         label: _("About"),
         use_markup: true,
-        //xalign: 0,
       }),
     );
 

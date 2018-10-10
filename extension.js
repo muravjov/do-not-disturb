@@ -34,7 +34,6 @@ function enable() {
 
   const Gio = imports.gi.Gio;
   let icon = new St.Icon({
-    //icon_name: 'system-search-symbolic',
     style_class: "system-status-icon",
   });
 
@@ -48,7 +47,6 @@ function enable() {
   // A label expanded and center aligned in the y-axis
   let notificationsCount = new St.Label({
     text: "0",
-    //y_expand: true,
     y_align: Clutter.ActorAlign.CENTER,
   });
 
@@ -82,24 +80,6 @@ function enable() {
   //box.add(PopupMenu.arrowIcon(St.Side.BOTTOM));
 
   dndButton.actor.add_child(box);
-
-  //
-  // :TRICKY: I would like create PopupMenu explicitely, without PanelMenu.Button,
-  // but something goes wrong last time => should to decompose PanelMenu.Button
-  // carefully and deduce how to construct it from ground zero
-  //
-  // const PopupMenu = imports.ui.popupMenu;
-  // let menu = new PopupMenu.PopupMenu(button, 0, St.Side.TOP, 0);
-  // const Clutter = imports.gi.Clutter;
-  // button.connect("event", function(actor, event) {
-  //   if (
-  //     event.type() == Clutter.EventType.TOUCH_BEGIN ||
-  //     event.type() == Clutter.EventType.BUTTON_PRESS
-  //   )
-  //     menu.toggle();
-  //   return Clutter.EVENT_PROPAGATE;
-  // });
-  // Main.panel._rightBox.insert_child_at_index(button, 0);
 
   /* 
 	In here we are adding the button in the status area
@@ -218,7 +198,6 @@ function enable() {
   for (const item of snoozeList) {
     let menuItem = new PopupMenu.PopupMenuItem(item.title);
     menuItem.connect("activate", (menuItem, event) => {
-      //log(item.title, item.duration);
       let duration = item.duration;
       //duration /= 60;
       setDNDState(true, { snoozedSeconds: duration });
@@ -231,7 +210,6 @@ function enable() {
 
   dndMenu.addMenuItem(switchDNDitem);
   switchDNDitem.connect("toggled", function(object, value) {
-    //log(value);
     setDNDState(value);
   });
 
@@ -296,12 +274,6 @@ function enable() {
       updateSNLabel();
     }
   });
-  // or so
-  //let origOpen = dndMenu.open;
-  //dndMenu.open = function() {
-  //  updateSNLabel();
-  //  origOpen.apply(dndMenu, arguments);
-  //};
 
   dndMenu.connect("destroy", function(menu) {
     // :TRICKY: we cannot just setDNDState(false) because UI has already destroyed
