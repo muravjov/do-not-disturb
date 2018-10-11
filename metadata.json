@@ -1,6 +1,7 @@
 {
   "name": "Do Not Disturb Time",
-  "description": "Disables notifications and audio for a period",
+  "description":
+    "Disables notifications and audio for a period. You can snooze notifications like in Slack!",
   "url": "https://github.com/muravjov/do-not-disturb",
   "uuid": "do-not-disturb-time@catbo.net",
   "shell-version": ["3.28.1"]
