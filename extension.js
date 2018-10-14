@@ -288,6 +288,17 @@ function enable() {
     snLabel.set_text(snoozeText);
   }
 
+  // configure middle click to toggle the dnd state
+  dndButton.actor.connect('button-press-event',  function(actor, event) {
+    let button = event.get_button();
+    if (button == 2) {
+      if (dndMenu.isOpen) {
+        dndMenu.close();
+      }
+      setDNDState(!dndOn);
+    };
+  });
+
   dndMenu.connect("open-state-changed", function(menu, isOpen) {
     if (isOpen) {
       updateSNLabel();
