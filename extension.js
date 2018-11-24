@@ -62,40 +62,79 @@ function enable() {
     icon.set_gicon(Gio.icon_new_for_string(expandLocalPath(iconName)));
   }
 
-  const Clutter = imports.gi.Clutter;
-  // A label expanded and center aligned in the y-axis
-  let notificationsCount = new St.Label({
-    text: "0",
-    y_align: Clutter.ActorAlign.CENTER,
-  });
-
-  const Main = imports.ui.main;
-  let unseenlist =
-    Main.panel.statusArea.dateMenu._messageList._notificationSection._list;
-  function onNotification() {
-    let number = unseenlist.get_n_children();
-    if (number != 0) {
-      notificationsCount.set_text(number.toString());
-      notificationsCount.show();
-    } else {
-      notificationsCount.hide();
-    }
-  }
-  onNotification();
-
-  let connectedSignalList = [];
-  function connectSignal(container, signalName, cb) {
-    let signal = container.connect(signalName, cb);
-    connectedSignalList.push(function() {
-      container.disconnect(signal);
-    });
-  }
-
-  connectSignal(unseenlist, "actor-added", onNotification);
-  connectSignal(unseenlist, "actor-removed", onNotification);
-
   box.add(icon);
-  box.add(notificationsCount);
+  const Main = imports.ui.main;
+  const Clutter = imports.gi.Clutter;
+
+  let settings = imports.configuration.getSettings(expandLocalPath("schemas"));
+
+  let ntfCounterDisconnector;
+  let notificationsCount;
+  function appendCounter() {
+    // A label expanded and center aligned in the y-axis
+    notificationsCount = new St.Label({
+      text: "0",
+      y_align: Clutter.ActorAlign.CENTER,
+    });
+
+    let unseenlist =
+      Main.panel.statusArea.dateMenu._messageList._notificationSection._list;
+    function onNotification() {
+      let number = unseenlist.get_n_children();
+      if (number != 0) {
+        notificationsCount.set_text(number.toString());
+        notificationsCount.show();
+      } else {
+        notificationsCount.hide();
+      }
+    }
+    onNotification();
+
+    let connectedSignalList = [];
+    function connectSignal(container, signalName, cb) {
+      let signal = container.connect(signalName, cb);
+      connectedSignalList.push(function() {
+        container.disconnect(signal);
+      });
+    }
+
+    connectSignal(unseenlist, "actor-added", onNotification);
+    connectSignal(unseenlist, "actor-removed", onNotification);
+
+    //box.add(notificationsCount);
+    // :TRICKY: according to documentation https://developer.gnome.org/clutter/stable/ClutterActor.html#clutter-actor-insert-child-above,
+    // insert_child_below() should work but no, it works the opposite!
+    box.insert_child_above(notificationsCount, icon);
+
+    ntfCounterDisconnector = function() {
+      for (const disconnect of connectedSignalList) {
+        disconnect();
+      }
+    };
+  }
+
+  if (settings.get_boolean("show-number-of-notifications")) {
+    appendCounter();
+  }
+
+  let snnSignal = settings.connect(
+    "changed::" + "show-number-of-notifications",
+    function(k, b) {
+      let snn = settings.get_boolean("show-number-of-notifications");
+      if (snn && !ntfCounterDisconnector) {
+        appendCounter();
+      } else if (!snn && ntfCounterDisconnector) {
+        ntfCounterDisconnector();
+        ntfCounterDisconnector = null;
+
+        box.remove_child(notificationsCount);
+      }
+    },
+  );
+  let ssnDisconnector = function() {
+    settings.disconnect(snnSignal);
+  };
+
   //box.add(PopupMenu.arrowIcon(St.Side.BOTTOM));
 
   dndButton.actor.add_child(box);
@@ -176,8 +215,6 @@ function enable() {
   }
 
   const pactl = imports.pactl;
-
-  let settings = imports.configuration.getSettings(expandLocalPath("schemas"));
 
   const Mainloop = imports.mainloop;
   const GLib = imports.gi.GLib;
@@ -289,14 +326,14 @@ function enable() {
   }
 
   // configure middle click to toggle the dnd state
-  dndButton.actor.connect('button-press-event',  function(actor, event) {
+  dndButton.actor.connect("button-press-event", function(actor, event) {
     let button = event.get_button();
     if (button == 2) {
       if (dndMenu.isOpen) {
         dndMenu.close();
       }
       setDNDState(!dndOn);
-    };
+    }
   });
 
   dndMenu.connect("open-state-changed", function(menu, isOpen) {
@@ -313,9 +350,11 @@ function enable() {
 
     tpContext.disconnect();
 
-    for (const disconnect of connectedSignalList) {
-      disconnect();
+    if (ntfCounterDisconnector) {
+      ntfCounterDisconnector();
     }
+
+    ssnDisconnector();
   });
 }
 

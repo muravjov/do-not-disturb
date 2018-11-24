@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="dnd@catbo.net">
-    <schema id="org.gnome.shell.extensions.dnd@catbo.net" path="/org/gnome/shell/extensions/dnd@catbo.net/">
+  <schema id="org.gnome.shell.extensions.dnd@catbo.net" path="/org/gnome/shell/extensions/dnd@catbo.net/">
     <key type="b" name="mute-audio">
       <default>true</default>
       <summary>Mute audio if true</summary>
+    </key>
+    <key type="b" name="show-number-of-notifications">
+      <default>true</default>
+      <summary>Show the number of notifications</summary>
     </key>
   </schema>
 </schemalist>

@@ -80,6 +80,7 @@ function buildPrefsWidget() {
   }
 
   appendBoolean("mute-audio", _("Mute audio while do-not-disturb period"));
+  appendBoolean("show-number-of-notifications", _("Show the number of notifications"));
 
   // About
   {
