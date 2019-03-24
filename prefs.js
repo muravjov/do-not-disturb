@@ -53,7 +53,7 @@ function buildPrefsWidget() {
   );
 
   function appendBoolean(storageName, label) {
-    settings_onoff = new Gtk.Switch({
+    let settings_onoff = new Gtk.Switch({
       active: settings.get_boolean(storageName),
     });
     settings_onoff.connect("notify::active", function(w) {
